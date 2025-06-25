@@ -31,6 +31,7 @@
         #yourItems {
             display: flex;
             width: 50vw;
+            padding-top: 50px;
         }
 
         .navbar {
@@ -139,8 +140,12 @@
         }
 
         .btn {
+
             width: 50vw;
             display: flex;
+            gap: 11px;
+
+
         }
 
         .btn-1 {
@@ -184,6 +189,15 @@
         .table tbody tr:hover {
             background-color: #f1f1f1;
         }
+        #description{
+            height: 101px;
+        }
+        .mb-3 textarea{
+            padding: 11px;
+        }
+        .mb-3 input{
+            padding: 2px 11px;
+        }
     </style>
 </head>
 
@@ -191,15 +205,15 @@
     <nav class="navbar">
         <a class="navbar-brand">TODOs List</a>
 
-        <div class="nav-links">
+        <!-- <div class="nav-links">
             <a href="#">Home</a>
             <a href="#">About</a>
             <div class="dropdown">
                 <a href="#">Items</a>
-                <!-- Add JS-controlled dropdown if you want -->
+                Add JS-controlled dropdown if you want
             </div>
             <a href="#">Contact</a>
-        </div>
+        </div> -->
 
         <form class="search-form">
             <input type="search" placeholder="Search" />
@@ -222,7 +236,8 @@
                 <textarea class="form-control" placeholder="Leave a comment here" id="description"></textarea>
             </div>
             <div class="btn">
-                <button type="submit" id="add" class="btn-1">Add to list</button>
+                <button id="add" class="btn-1">Add to list</button>
+                <button id="clear" onclick="clearStorage()" class="btn-1">Clear list</button>
             </div>
         </div>
         <div id="items">
@@ -239,11 +254,13 @@
                 <tbody id="tableBody">
                     <tr>
                         <th scope="row">1</th>
-                        <td>Get some coffee</td>
-                        <td>You need coffee as you are a coder</td>
+                        <td>Name of Item</td>
+                        <td>Description of item</td>
                         <td><button class="btn-1">Delete</button></td>
                     </tr>
+                </tbody>
             </table>
+
         </div>
 
     </div>
@@ -256,8 +273,8 @@
         crossorigin="anonymous"></script>
 
     <script>
-        add = document.getElementById("add");
-        add.addEventListener("click", () => {
+        let itemJsonArray = [];
+        function getAndupdate() {
             console.log("Updating list....");
             tit = document.getElementById('title').value;
             desc = document.getElementById('description').value;
@@ -267,10 +284,22 @@
                 localStorage.setItem('itemJson', JSON.stringify(itemJsonArray))
             }
             else {
-                itemJsonArrayStr = localStorage.getItem('itemJson');
+                let itemJsonArrayStr = localStorage.getItem('itemJson');
                 itemJsonArray = JSON.parse(itemJsonArrayStr);
                 itemJsonArray.push([tit, desc]);
                 localStorage.setItem('itemJson', JSON.stringify(itemJsonArray))
+            }
+
+            update();
+        }
+        function update() {
+            if (localStorage.getItem('itemJson') == null) {
+                itemJsonArray = [];
+                localStorage.setItem('itemJson', JSON.stringify(itemJsonArray))
+            }
+            else {
+                let itemJsonArrayStr = localStorage.getItem('itemJson');
+                itemJsonArray = JSON.parse(itemJsonArrayStr);
             }
 
             //Populate the table
@@ -279,15 +308,35 @@
 
             itemJsonArray.forEach((element, index) => {
                 str += `
+                
                 <tr>
-                        <th scope="row">${index+1}</th>
+                        <th scope="row">${index + 1}</th>
                         <td>${element[0]}</td>
                         <td>${element[1]}</td>
-                        <td><button class="btn-1">Delete</button></td>
+                        <td><button class="btn-1" onclick= "deleted(${index})">Delete</button></td>
                     </tr>`;
             });
             tableBody.innerHTML = str;
-        })
+
+        };
+        add = document.getElementById("add");
+        add.addEventListener("click", getAndupdate);
+        update();
+        function deleted(itemIndex) {
+            console.log("Delete", itemIndex);
+            itemJsonArrayStr = localStorage.getItem('itemJson');
+            itemJsonArray = JSON.parse(itemJsonArrayStr);
+            //Delete itemIndex element from the array
+            itemJsonArray.splice(itemIndex, 1);
+            localStorage.setItem('itemJson', JSON.stringify(itemJsonArray));
+            update();
+        }
+        function clearStorage() {
+            console.log('Clearing the storage');
+            localStorage.clear();
+            update();
+        }
+
     </script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
