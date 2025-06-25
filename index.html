@@ -189,13 +189,16 @@
         .table tbody tr:hover {
             background-color: #f1f1f1;
         }
-        #description{
+
+        #description {
             height: 101px;
         }
-        .mb-3 textarea{
+
+        .mb-3 textarea {
             padding: 11px;
         }
-        .mb-3 input{
+
+        .mb-3 input {
             padding: 2px 11px;
         }
     </style>
@@ -278,6 +281,20 @@
             console.log("Updating list....");
             tit = document.getElementById('title').value;
             desc = document.getElementById('description').value;
+
+            if ((tit === "") || (desc === "")) {
+                if (tit === "" && desc != "") {
+                    alert("Title is Empty.")
+                }
+                else if (desc === "" && tit != "") {
+                    alert("Description is Empty.")
+                }
+                else {
+                    alert("Title and Description is Empty.")
+                }
+                return;
+            }
+
             if (localStorage.getItem('itemJson') == null) {
                 itemJsonArray = [];
                 itemJsonArray.push([tit, desc]);
@@ -319,9 +336,11 @@
             tableBody.innerHTML = str;
 
         };
-        add = document.getElementById("add");
-        add.addEventListener("click", getAndupdate);
+
+
+        document.getElementById("add").addEventListener("click", getAndupdate);
         update();
+
         function deleted(itemIndex) {
             console.log("Delete", itemIndex);
             itemJsonArrayStr = localStorage.getItem('itemJson');
